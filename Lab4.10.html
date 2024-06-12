@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lab 6</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="Lab4.10.css">
+</head>
+
+<body>
+
+<h1>Fake eCommerce Website</h1>
+
+<div class="dropdown">
+    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      Category
+    </button>
+    <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="#" data-filter="men's clothing">Men's Clothing</a></li>
+        <li><a class="dropdown-item" href="#" data-filter="women's clothing">Women's Clothing</a></li>
+        <li><a class="dropdown-item" href="#" data-filter="jewelery">Jewelery</a></li>
+        <li><a class="dropdown-item" href="#" data-filter="electronics">Electronics</a></li>
+        <li><a class="dropdown-item" href="#" data-filter="all">Show All</a></li>
+    </ul>
+  </div>
+
+    <template id="card-template">
+        <div class="col">
+            <div class="card h-100">
+                <img src="" class="card-img-top" alt="postTitle">
+                <div class="card-body">
+                    <h5 class="card-title"></h5>
+                    <h6 class="card-price"></h6>
+                    <h6 class="card-rating"></h6>
+                    <p class="card-description"></p>
+                    <p class="card-category"></p>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <div id="posts-container" class="container my-4">
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4" id="posts-row"></div>
+    </div>
+
+    <script>
+       let postsData;
+
+fetch('https://fakestoreapi.com/products')
+    .then((response) => response.json())
+    .then((json) => {
+        postsData = json;
+        console.log(postsData); // This will log the JSON response
+        renderPosts(postsData); // Call the function to render posts
+    });
+
+function renderPosts(posts) {
+    const row = document.getElementById('posts-row');
+    row.innerHTML = ''; // Clear existing posts
+    posts.forEach(post => {
+        const postTemplate = document.querySelector('#card-template').content.cloneNode(true);
+        const postCard = postTemplate.querySelector('.card');
+        const postImg = postTemplate.querySelector('.card-img-top');
+        const postTitle = postTemplate.querySelector('.card-title');
+        const postPrice = postTemplate.querySelector('.card-price');
+        const postRating = postTemplate.querySelector('.card-rating');
+        const postDescription = postTemplate.querySelector('.card-description');
+        const postCategory = postTemplate.querySelector('.card-category');
+
+        postImg.src = post.image;
+        postTitle.textContent = post.title;
+        postPrice.textContent = `$${post.price}`;
+        postRating.textContent = `Rating: ${post.rating.rate} Qty: ${post.rating.count}`;
+        postDescription.textContent = post.description;
+        postCategory.textContent = post.category;
+
+        row.appendChild(postTemplate);
+    });
+}
+
+function filterPostsByCategory(category) {
+            if (category === 'show-all') {
+                renderPosts(postsData); // Display all posts
+            } else {
+                const filteredPosts = postsData.filter(post => post.category === category);
+                if (filteredPosts.length > 0) {
+                    renderPosts(filteredPosts); // Display filtered posts
+                } else {
+                    const row = document.getElementById('posts-row');
+                    row.innerHTML = '<p>No items found.</p>';
+                }
+            }
+        }
+
+document.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', event => {
+        const filter = event.target.getAttribute('data-filter');
+        filterPostsByCategory(filter);
+    });
+});
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+</body>
+
+</html>

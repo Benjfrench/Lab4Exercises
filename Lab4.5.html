@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        .news-card {
+            border: 2px solid black;
+            background-color: red;
+            margin: 10px;
+            padding: 10px;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <template id="news-template">
+        <div class="news-card">
+            <div class="news-body">
+                <div class="news-title"></div>
+                <div class="news-content"></div>
+            </div>
+        </div>
+    </template>
+
+    <div id="card-list"></div>
+
+    <div>
+        <div id="add-title">
+            <p>News item title:</p>
+            <input id="title-input" type="text">
+        </div>
+        <div id="add-content">
+            <p>News item content:</p>
+            <input id="content-input" type="text">
+        </div><br>
+        <div id="add-btn">
+        <button onclick="addNews()">Add News Item</button>
+        </div>
+    </div>
+
+    <script>
+        let news = [
+            { id: 1, title: 'Election Results', content: "Newly elected minister..." },
+            { id: 2, title: 'Sporting Success', content: "World Cup winners..." },
+            { id: 3, title: 'Tornado Warning', content: "Residents should prepare..." }
+        ];
+
+        // Function to create and append news cards
+        function createNewsCards() {
+            const template = document.getElementById('news-template').content;
+            const cardList = document.getElementById('card-list');
+
+            // Clear the current cards
+            cardList.innerHTML = '';
+
+            // Loop through each item in the news array
+            news.forEach(item => {
+                const clone = document.importNode(template, true);
+                clone.querySelector('.news-title').textContent = item.title;
+                clone.querySelector('.news-content').textContent = item.content;
+                cardList.appendChild(clone);
+            });
+        }
+
+        function addNews() {
+            const titleInput = document.getElementById('title-input').value;
+            const contentInput = document.getElementById('content-input').value;
+
+            if (titleInput && contentInput) {
+                const newId = news.length > 0 ? Math.max(...news.map(item => item.id)) + 1 : 1;
+
+                const newNewsItem = {
+                    id: newId,
+                    title: titleInput,
+                    content: contentInput
+                };
+
+                news.push(newNewsItem);
+                
+                // Clear the input fields after adding the news item
+                document.getElementById('title-input').value = '';
+                document.getElementById('content-input').value = '';
+            } else {
+                alert('Please fill in both the title and content.');
+            }
+        }
+
+        // Initial call to create the news cards
+        createNewsCards();
+
+        // Set interval to update the news cards every 5 seconds
+        setInterval(createNewsCards, 5000);
+    </script>
+</body>
+
+</html>
